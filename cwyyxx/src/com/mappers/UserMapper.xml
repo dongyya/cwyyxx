@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.UserDao">
+	
+	<resultMap type="User" id="userResult">
+		<id column="user_id" property="userId"/>
+		<result column="user_name" property="userName"/>
+		<result column="pass_word" property="passWord"/>
+		<result column="email" property="email"/>
+		<result column="user_type_id" property="userTypeId"/>
+	</resultMap>
+	
+	<select id="login" resultType="User" resultMap="userResult">
+		 select * from t_user t where t.user_name=#{userName} and t.pass_word=#{passWord}
+	</select>
+	
+	<select id="findById" resultType="User" resultMap="userResult" parameterType="Integer">
+		select * from t_user where user_id=#{id}
+	</select>
+	
+	<select id="findpwd" parameterType="User" resultType="User" resultMap="userResult">
+  	    select * from t_user where email=#{email}
+  	</select>
+	
+  	<update id="updatePwd" parameterType="User" >
+		update t_user set pass_word=#{passWord} where user_id=#{id}   
+	</update>
+  	
+  	<delete id="delete" parameterType="Integer">
+  	    delete from t_user where user_id=#{id}
+  	</delete>
+  	
+  	<select id="list" resultMap="userResult" parameterType="Map">
+  	    select * from t_user 
+  	    <where>
+  	        <if test="userName!=null and userName!='' ">
+  	            user_name like '%${trueName}%'
+  	        </if>
+  	    </where>
+  	    limit #{start},#{pageSize}
+  	</select>
+  	
+  	<insert id="save" parameterType="User">
+  	    insert into t_user(user_name,pass_word,email,user_type_id) values(#{userName},#{passWord},#{email},#{userTypeId})
+  	</insert>
+  	
+  	<update id="update" parameterType="User">
+  	    update t_user
+  	    <set>
+  	        <if test="userName!=null and userName!='' ">
+  	            user_name=#{userName},
+  	        </if>
+  	        <if test="passWord!=null and passWord!='' ">
+  	            pass_word=#{passWord},
+  	        </if>
+  	        <if test="email!=null and email!='' ">
+  	            email=#{email},
+  	        </if>
+  	        <if test="userTypeId!=null and userTypeId!='' ">
+  	            user_type_id=#{userTypeId},
+  	        </if>
+  	    </set>
+  	    where user_id=#{id}
+  	</update>
+  	
+  	<select id="getCount" parameterType="Map" resultType="Integer">
+	    select count(*) from t_user t
+	    <where>
+			<if test="trueName!=null and trueName!='' ">
+				and t.user_name like '%${trueName}%'
+			</if>
+		</where>
+	</select>
+</mapper> 
